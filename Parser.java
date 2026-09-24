@@ -47,21 +47,23 @@ class Parser {
     }
 
     private Stmt damdecleration() {
-        consume(TokenType.DAM, "Expected 'dam' keyword.");
+        
         Token name = consume(TokenType.IDENTIFIER, "Expected function name.");
+        consume(TokenType.LEFT_PAREN, "Expected '(' after dam name."); 
 
         List<Token> params = new ArrayList<>();
         
         if (!(check(TokenType.RIGHT_PAREN))) {
             do {
-                consume(TokenType.IDENTIFIER, "Expected parameter name.");
+                Token param = consume(TokenType.IDENTIFIER, "Expected parameter name.");
+                params.add(param);
             } 
             while (match(TokenType.COMMA));
     } 
     consume(TokenType.RIGHT_PAREN, "Expected ')' after parameters.");
-    consume(TokenType.LEFT_BRACE, "Expected '{' before function body.");
+    consume(TokenType.LEFT_BRACE, "Expected '{' before DAM body.");
     List<Stmt> body = block();
-    
+
     return new Stmt.Dam(name, params, body);
     }
 
