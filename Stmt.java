@@ -7,6 +7,7 @@ abstract class Stmt {
     R visitBlockStmt(Block stmt);
     R visitIfStmt(If stmt);
     R visitReleaseStmt(Release stmt);
+    R visitDamStmt(Dam stmt);
   }
   static class Expression extends Stmt {
     Expression(Expr expression) {
@@ -73,6 +74,22 @@ abstract class Stmt {
       return visitor.visitReleaseStmt(this);
     }
     final Expr value;
+  }
+  static class Dam extends Stmt {
+    Dam(Token name, List<Token> params, List<Stmt> body) {
+      this.name = name;
+      this.params = params;
+      this.body = body;
+    }
+
+
+    @Override
+    <R> R accept(Visitor<R> visitor) {
+      return visitor.visitDamStmt(this);
+    }
+    final Token name;
+    final List<Token> params;
+    final List<Stmt> body;
   }
 
   abstract <R> R accept(Visitor<R> visitor);

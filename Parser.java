@@ -46,9 +46,31 @@ class Parser {
         return new Stmt.Release(value);
     }
 
+    private Stmt damdecleration() {
+        consume(TokenType.DAM, "Expected 'dam' keyword.");
+        Token name = consume(TokenType.IDENTIFIER, "Expected function name.");
+
+        List<Token> params = new ArrayList<>();
+        
+        if (!(check(TokenType.RIGHT_PAREN))) {
+            do {
+                consume(TokenType.IDENTIFIER, "Expected parameter name.");
+            } 
+            while (match(TokenType.COMMA));
+    } 
+    consume(TokenType.RIGHT_PAREN, "Expected ')' after parameters.");
+    consume(TokenType.LEFT_BRACE, "Expected '{' before function body.");
+    List<Stmt> body = block();
+    
+    return new Stmt.Dam(name, params, body);
+    }
+
     private Stmt declaration() {
         if (match(TokenType.VAR)) {
             return vardeclaration();
+        }
+        if (match(TokenType.DAM)) {
+            return damdecleration();
         }
         return statement();
     }
