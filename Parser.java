@@ -25,7 +25,26 @@ class Parser {
         consume(TokenType.RIGHT_BRACE, "Expected '}' after block.");
         return statements;
     }
+
+    private Stmt ifstatement() {
+        consume(TokenType.LEFT_PAREN, "Expected '(' after 'if'.");
+
+        Expr condition = expression();
+        consume(TokenType.RIGHT_PAREN, "Expected ')' after condition.");
+        Stmt thenbranch = statement();
+
+        Stmt elseBranch = null;
+        if (match(TokenType.ELSE)) {
+            elseBranch = statement(); // if there is an else branch, parse it
+        }
+        return new Stmt.If(condition, thenbranch, elseBranch);
+    }
     
+    private Stmt release() {
+        Expr value = expression();
+        consume(TokenType.SEMICOLON, "Expected ';' after release statement.");
+        return new Stmt.Release(value);
+    }
 
     private Stmt declaration() {
         if (match(TokenType.VAR)) {
@@ -45,7 +64,10 @@ class Parser {
         return new Stmt.Var(name, initializer);
     }
 
+
     private Stmt statement() {
+        if (match(TokenType.RELEASE)) return release();
+        if (match(TokenType.IF)) return ifstatement();
          if (match(TokenType.LEFT_BRACE)) { 
             return new Stmt.Block(block()); }
         return expressionstatement();
@@ -117,7 +139,7 @@ class Parser {
         }
 
         if (match(TokenType.IDENTIFIER)) {
-            return new Expr.Varriable(previous());
+            return new Expr.Variable(previous());
         }
         
         if(match(TokenType.LEFT_PAREN)) {

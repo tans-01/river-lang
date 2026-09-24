@@ -190,6 +190,7 @@ private static final Map<String, TokenType> keywords;
     keywords.put("true",   TokenType.TRUE);
     keywords.put("var",    TokenType.VAR);
     keywords.put("while",  TokenType.WHILE);
+    keywords.put("release", TokenType.RELEASE);
   }
 }
 
