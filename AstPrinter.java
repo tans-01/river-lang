@@ -52,6 +52,15 @@ class AstPrinter implements Expr.Visitor<String> {
         } else if (stmt instanceof Stmt.Expression exprStmt) {
             System.out.println("Expr statement: " + new AstPrinter().print(exprStmt.expression));
         }
+        else if (stmt instanceof Stmt.Block blockStmt) {
+    System.out.println("Block with " + blockStmt.statements.size() + " statement(s):");
+    for (Stmt inner : blockStmt.statements) {
+        if (inner instanceof Stmt.Var v) {
+            System.out.println("  Var: " + v.name.lexeme + " = " + 
+                (v.initializer != null ? new AstPrinter().print(v.initializer) : "null"));
+        }
+    }
+}
     }
 }
 

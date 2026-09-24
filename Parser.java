@@ -16,6 +16,17 @@ class Parser {
         return statements;
     }
 
+    private List<Stmt> block() {
+        List<Stmt> statements = new ArrayList<>();
+
+        while (!(check(TokenType.RIGHT_BRACE)) && !isAtEnd()) {
+            statements.add(declaration());
+        }
+        consume(TokenType.RIGHT_BRACE, "Expected '}' after block.");
+        return statements;
+    }
+    
+
     private Stmt declaration() {
         if (match(TokenType.VAR)) {
             return vardeclaration();
@@ -35,6 +46,8 @@ class Parser {
     }
 
     private Stmt statement() {
+         if (match(TokenType.LEFT_BRACE)) { 
+            return new Stmt.Block(block()); }
         return expressionstatement();
     }
     private Stmt expressionstatement() {
