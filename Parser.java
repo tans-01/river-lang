@@ -16,6 +16,23 @@ class Parser {
         return statements;
     }
 
+    private Stmt riverdeclaration(boolean output) {
+        Token name = consume(TokenType.IDENTIFIER, "Expected river name.");
+        consume(TokenType.EQUAL, "Expected '=' after river name.");
+        Expr value;
+        if(check(TokenType.IDENTIFIER) && checknext(TokenType.FROM)) {
+            Token dam = consume(TokenType.IDENTIFIER, "Expected 'dam name'");
+            consume(TokenType.FROM, "Expected 'from' keyword.");
+            Expr source = expression();
+            value = new Expr.connection(dam, source);
+        }
+        else {
+            value = expression();
+        }
+        consume(TokenType.SEMICOLON, "Expected ';' after river statement.");
+        return new Stmt.River(name, value, output);
+    }
+
     private List<Stmt> block() {
         List<Stmt> statements = new ArrayList<>();
 
@@ -68,9 +85,15 @@ class Parser {
     }
 
     private Stmt declaration() {
+        boolean output = match(TokenType.OUTPUT);
+
         if (match(TokenType.VAR)) {
             return vardeclaration();
         }
+        if (match(TokenType.RIVER)) {
+            return riverdeclaration(output);
+        }
+
         if (match(TokenType.DAM)) {
             return damdecleration();
         }
@@ -208,5 +231,9 @@ class Parser {
 
     private Token previous() {
         return tokens.get(current - 1);
+    }
+    private boolean checknext(TokenType type) {
+        if(isAtEnd()) return false;
+        return tokens.get(current + 1).type == type;
     }
 }

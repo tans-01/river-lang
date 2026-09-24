@@ -17,7 +17,8 @@ public class GenerateAst {
         "Grouping : Expr expression",
         "Literal  : Object value",
         "Unary    : Token operator, Expr right",
-        "Variable : Token name"
+        "Variable : Token name",
+        "connection : Token dam, Expr source"
       ));
        defineAst(outputDir, "Stmt", Arrays.asList(
       "Expression : Expr expression",
@@ -25,7 +26,8 @@ public class GenerateAst {
       "Block     : List<Stmt> statements",
       "If        : Expr condition, Stmt thenBranch, Stmt elseBranch",
       "Release   : Expr value",
-      "Dam       : Token name, List<Token> params, List<Stmt> body"
+      "Dam       : Token name, List<Token> params, List<Stmt> body",
+      "River     : Token name, Expr value, boolean output"
     ));
       
     

@@ -8,6 +8,7 @@ abstract class Stmt {
     R visitIfStmt(If stmt);
     R visitReleaseStmt(Release stmt);
     R visitDamStmt(Dam stmt);
+    R visitRiverStmt(River stmt);
   }
   static class Expression extends Stmt {
     Expression(Expr expression) {
@@ -90,6 +91,22 @@ abstract class Stmt {
     final Token name;
     final List<Token> params;
     final List<Stmt> body;
+  }
+  static class River extends Stmt {
+    River(Token name, Expr value, boolean output) {
+      this.name = name;
+      this.value = value;
+      this.output = output;
+    }
+
+
+    @Override
+    <R> R accept(Visitor<R> visitor) {
+      return visitor.visitRiverStmt(this);
+    }
+    final Token name;
+    final Expr value;
+    final boolean output;
   }
 
   abstract <R> R accept(Visitor<R> visitor);

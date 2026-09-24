@@ -192,6 +192,9 @@ private static final Map<String, TokenType> keywords;
     keywords.put("while",  TokenType.WHILE);
     keywords.put("release", TokenType.RELEASE);
     keywords.put("dam", TokenType.DAM);
+    keywords.put("river", TokenType.RIVER);
+    keywords.put("output", TokenType.OUTPUT);
+    keywords.put("from", TokenType.FROM);
   }
 }
 

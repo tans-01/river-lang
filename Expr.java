@@ -7,6 +7,7 @@ abstract class Expr {
     R visitLiteralExpr(Literal expr);
     R visitUnaryExpr(Unary expr);
     R visitVariableExpr(Variable expr);
+    R visitconnectionExpr(connection expr);
   }
   static class Binary extends Expr {
     Binary(Expr left, Token operator, Expr right) {
@@ -73,6 +74,20 @@ abstract class Expr {
       return visitor.visitVariableExpr(this);
     }
     final Token name;
+  }
+  static class connection extends Expr {
+    connection(Token dam, Expr source) {
+      this.dam = dam;
+      this.source = source;
+    }
+
+
+    @Override
+    <R> R accept(Visitor<R> visitor) {
+      return visitor.visitconnectionExpr(this);
+    }
+    final Token dam;
+    final Expr source;
   }
 
   abstract <R> R accept(Visitor<R> visitor);
