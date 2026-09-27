@@ -8,6 +8,7 @@ abstract class Expr {
     R visitUnaryExpr(Unary expr);
     R visitVariableExpr(Variable expr);
     R visitconnectionExpr(connection expr);
+    R visitflowLiteralExpr(flowLiteral expr);
   }
   static class Binary extends Expr {
     Binary(Expr left, Token operator, Expr right) {
@@ -88,6 +89,22 @@ abstract class Expr {
     }
     final Token dam;
     final Expr source;
+  }
+  static class flowLiteral extends Expr {
+    flowLiteral(Expr start, Expr spread, Expr magnitude) {
+      this.start = start;
+      this.spread = spread;
+      this.magnitude = magnitude;
+    }
+
+
+    @Override
+    <R> R accept(Visitor<R> visitor) {
+      return visitor.visitflowLiteralExpr(this);
+    }
+    final Expr start;
+    final Expr spread;
+    final Expr magnitude;
   }
 
   abstract <R> R accept(Visitor<R> visitor);

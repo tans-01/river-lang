@@ -16,6 +16,17 @@ class Parser {
         return statements;
     }
 
+    private Expr flowLiteral() {
+         consume(TokenType.LEFT_PAREN, "Expect '(' after 'rain'.");
+    Expr start = expression();
+    consume(TokenType.COMMA, "Expect ',' after start.");
+    Expr spread = expression();
+    consume(TokenType.COMMA, "Expect ',' after spread.");
+    Expr magnitude = expression();
+    consume(TokenType.RIGHT_PAREN, "Expect ')' after magnitude.");
+    return new Expr.flowLiteral(start, spread, magnitude);
+        }
+
     private Stmt riverdeclaration(boolean output) {
         Token name = consume(TokenType.IDENTIFIER, "Expected river name.");
         consume(TokenType.EQUAL, "Expected '=' after river name.");
@@ -187,6 +198,10 @@ class Parser {
 
         if (match(TokenType.IDENTIFIER)) {
             return new Expr.Variable(previous());
+        }
+
+        if (match(TokenType.RAIN)) {
+            return flowLiteral();
         }
         
         if(match(TokenType.LEFT_PAREN)) {

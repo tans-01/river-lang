@@ -18,7 +18,8 @@ public class GenerateAst {
         "Literal  : Object value",
         "Unary    : Token operator, Expr right",
         "Variable : Token name",
-        "connection : Token dam, Expr source"
+        "connection : Token dam, Expr source",
+        "flowLiteral :  Expr start, Expr spread, Expr magnitude"
       ));
        defineAst(outputDir, "Stmt", Arrays.asList(
       "Expression : Expr expression",

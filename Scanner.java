@@ -195,6 +195,7 @@ private static final Map<String, TokenType> keywords;
     keywords.put("river", TokenType.RIVER);
     keywords.put("output", TokenType.OUTPUT);
     keywords.put("from", TokenType.FROM);
+    keywords.put("rain", TokenType.RAIN);   
   }
 }
 

@@ -66,7 +66,10 @@ class AstPrinter implements Expr.Visitor<String> {
 
     @Override
     public String visitconnectionExpr(Expr.connection expr) {
-        // TODO Auto-generated method stub
         return parenthesize("from " + expr.dam.lexeme, expr.source);
+    }
+
+    public String visitflowLiteralExpr(Expr.flowLiteral expr) {
+        return parenthesize("rain", expr.start, expr.spread, expr.magnitude);
     }
 }
