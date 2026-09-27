@@ -22,6 +22,8 @@ Chapter 4 (Scanning) and Chapter 5 (Representing Code) for the scanner and AST c
 
 The working folder is the root of the submitted zip; all `.java` files sit flat with no subfolders (no packages are used). Compile with `javac *.java`. Run an example program with `java lox Program1.txt` (or `Program2.txt` / `Program3.txt`), which reads the file, parses it, and prints the resulting parsed syntax tree for each statement.
 
+Running java lox with no arguments starts an interactive prompt where individual lines of the river language can be typed and parsed one at a time, useful for testing snippets directly. after compiling you can do `java lox` it will give you interactive prompt to write on (single line only).
+
 3. What literal in your language represents a river that gets 10L/s of flow on the first day after 1mm of rainfall?
 
 ### Your answer
