@@ -33,13 +33,18 @@ public class lox {
             run(line);
         }
     }
-    public static void run (String source) {
-        Scanner scanner = new Scanner(source);
-        List<Token> tokens = scanner.scanTokens();
-        for (Token token : tokens) {
-            System.out.println(token);
-        }
+    public static void run(String source) {
+    Scanner scanner = new Scanner(source);
+    List<Token> tokens = scanner.scanTokens();
+    Parser parser = new Parser(tokens);
+    List<Stmt> statements = parser.parse();
+
+    AstPrinter printer = new AstPrinter();
+    System.out.println("Parsed " + statements.size() + " statement(s):");
+    for (Stmt stmt : statements) {
+        System.out.println(printer.print(stmt));
     }
+}
 
     static void error(int line, String msg) {
         System.err.println("[line " + line + "] Error: " + msg);

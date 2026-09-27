@@ -1,0 +1,4 @@
+river googong = rain(1, 1, 10);
+river jerrabombarra = rain(1, 2, 5);
+river upper_molongolo = rain(1, 1, 8);
+output river central_molongolo = googong + jerrabombarra + upper_molongolo;

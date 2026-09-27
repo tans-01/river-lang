@@ -1,0 +1,38 @@
+river googong = rain(1, 1, 10);
+river jerrabombarra = rain(1, 2, 6);
+river upper_molongolo = rain(1, 1, 8);
+
+dam dam1(capacity, startingLevel) {
+    if (level > capacity) {
+        release inflow + inflow;
+    } else if (level < 50) {
+        release 0;
+    } else {
+        release inflow;
+    }
+}
+
+river queanbeyan = dam1 from googong;
+river central_molongolo = queanbeyan + upper_molongolo + jerrabombarra;
+
+dam dam2(capacity, startingLevel) {
+    if (level > capacity) {
+        release inflow + inflow;
+    } else {
+        release inflow;
+    }
+}
+
+river lower_molongolo = dam2 from central_molongolo;
+
+dam dam3(capacity, startingLevel) {
+    if (level > capacity) {
+        release rain(2, 1, 5);
+    } else if (level < 10) {
+        release rain(1, 0, 1);
+    } else {
+        release inflow;
+    }
+}
+
+output river final_output = dam3 from lower_molongolo;

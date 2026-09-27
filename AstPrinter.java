@@ -1,10 +1,17 @@
 import java.io.IOException;
 import java.util.List;
 
-class AstPrinter implements Expr.Visitor<String> {
+class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
+
     String print(Expr expr) {
         return expr.accept(this);
     }
+
+    String print(Stmt stmt) {
+        return stmt.accept(this);
+    }
+
+    // Expr visitors 
 
     public String visitBinaryExpr(Expr.Binary expr) {
         return parenthesize(expr.operator.lexeme, expr.left, expr.right);
@@ -19,10 +26,66 @@ class AstPrinter implements Expr.Visitor<String> {
     public String visitUnaryExpr(Expr.Unary expr) {
         return parenthesize(expr.operator.lexeme, expr.right);
     }
-
     public String visitVariableExpr(Expr.Variable expr) {
         return expr.name.lexeme;
     }
+    public String visitconnectionExpr(Expr.connection expr) {
+        return parenthesize("from " + expr.dam.lexeme, expr.source);
+    }
+    public String visitflowLiteralExpr(Expr.flowLiteral expr) {
+        return parenthesize("rain", expr.start, expr.spread, expr.magnitude);
+    }
+
+    // Stmt visitors 
+
+    public String visitExpressionStmt(Stmt.Expression stmt) {
+        return print(stmt.expression) + ";";
+    }
+
+    public String visitVarStmt(Stmt.Var stmt) {
+        return "var " + stmt.name.lexeme + " = " +
+            (stmt.initializer != null ? print(stmt.initializer) : "nil") + ";";
+    }
+
+    public String visitRiverStmt(Stmt.River stmt) {
+        return (stmt.output ? "output " : "") + "river " + stmt.name.lexeme + " = " + print(stmt.value) + ";";
+    }
+
+    public String visitBlockStmt(Stmt.Block stmt) {
+        StringBuilder sb = new StringBuilder("{\n");
+        for (Stmt s : stmt.statements) {
+            sb.append("  ").append(print(s)).append("\n");
+        }
+        sb.append("}");
+        return sb.toString();
+    }
+
+    public String visitIfStmt(Stmt.If stmt) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("if (").append(print(stmt.condition)).append(") ").append(print(stmt.thenBranch));
+        if (stmt.elseBranch != null) {
+            sb.append(" else ").append(print(stmt.elseBranch));
+        }
+        return sb.toString();
+    }
+
+    public String visitReleaseStmt(Stmt.Release stmt) {
+        return "release " + print(stmt.value) + ";";
+    }
+
+    public String visitDamStmt(Stmt.Dam stmt) {
+        StringBuilder params = new StringBuilder();
+        for (Token p : stmt.params) params.append(p.lexeme).append(" ");
+        StringBuilder sb = new StringBuilder();
+        sb.append("dam ").append(stmt.name.lexeme).append("(").append(params.toString().trim()).append(") {\n");
+        for (Stmt s : stmt.body) {
+            sb.append("  ").append(print(s)).append("\n");
+        }
+        sb.append("}");
+        return sb.toString();
+    }
+
+    // helper 
 
     private String parenthesize(String name, Expr... exprs) {
         StringBuilder builder = new StringBuilder();
@@ -33,43 +96,5 @@ class AstPrinter implements Expr.Visitor<String> {
         }
         builder.append(")");
         return builder.toString();
-    }
-
-    public static void main(String[] args) throws IOException {
-    java.util.Scanner input = new java.util.Scanner(System.in);
-    System.out.print("Enter an expression: ");
-    String source = input.nextLine();
-
-    Scanner scanner = new Scanner(source);
-    List<Token> tokens = scanner.scanTokens();
-    Parser parser = new Parser(tokens);
-    List<Stmt> statements = parser.parse();
-
-    for (Stmt stmt : statements) {
-        if (stmt instanceof Stmt.Var varStmt) {
-            System.out.println("Var: " + varStmt.name.lexeme + " = " + 
-                (varStmt.initializer != null ? new AstPrinter().print(varStmt.initializer) : "null"));
-        } else if (stmt instanceof Stmt.Expression exprStmt) {
-            System.out.println("Expr statement: " + new AstPrinter().print(exprStmt.expression));
-        }
-        else if (stmt instanceof Stmt.Block blockStmt) {
-    System.out.println("Block with " + blockStmt.statements.size() + " statement(s):");
-    for (Stmt inner : blockStmt.statements) {
-        if (inner instanceof Stmt.Var v) {
-            System.out.println("  Var: " + v.name.lexeme + " = " + 
-                (v.initializer != null ? new AstPrinter().print(v.initializer) : "null"));
-        }
-                }
-            }
-        }
-    }
-
-    @Override
-    public String visitconnectionExpr(Expr.connection expr) {
-        return parenthesize("from " + expr.dam.lexeme, expr.source);
-    }
-
-    public String visitflowLiteralExpr(Expr.flowLiteral expr) {
-        return parenthesize("rain", expr.start, expr.spread, expr.magnitude);
     }
 }
