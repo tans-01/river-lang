@@ -226,3 +226,14 @@ My language departs from the exemplar and from in-class work in several delibera
 - **Extending the Visitor pattern beyond the textbook.** `AstPrinter` (in `AstPrinter.java`) implements both `Expr.Visitor<String>` and `Stmt.Visitor<String>` — the textbook's own `AstPrinter` only ever implements the former, since statements are introduced in a later chapter. I extended it to properly print full parsed programs, including nested dam bodies and control flow, using the Visitor pattern rather than manual type-checking.
 
 All of the above can be seen running end-to-end via `java lox Program3.txt`, which exercises every one of these constructs together in a single program.
+
+* note:
+
+Compile with `javac *.java` from the root of the extracted zip (all files are flat, no subfolders, no packages).
+
+Run any example program with:
+`java lox Program1.txt`
+`java lox Program2.txt`
+`java lox Program3.txt`
+
+Each command reads the file, scans and parses it, and prints the number of top-level statements parsed followed by the full parsed syntax tree for each statement.
