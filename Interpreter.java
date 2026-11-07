@@ -22,7 +22,8 @@ public Object visitLiteralExpr(Expr.Literal expr) {
             return -(double)right;
 
         case TokenType.BANG:
-        return !isTruthy(right);
+            checkNumberOperand(expr.operator, right);
+            return !isTruthy(right);
     }
 
     return null;
@@ -40,6 +41,7 @@ public Object visitLiteralExpr(Expr.Literal expr) {
     Object right = evaluate(expr.right);
 
     switch (expr.operator.type) {
+        
         case TokenType.PLUS:
             if (left instanceof Double && right instanceof Double) {
                 return (double)left + (double)right;                    // we could add string too now (concatenation)
@@ -47,28 +49,40 @@ public Object visitLiteralExpr(Expr.Literal expr) {
             if (left instanceof String && right instanceof String) {
                 return (String)left + (String)right;
             }
+            throw new RuntimeError(expr.operator, "Operands must be two numbers or two strings.");
+            
             break;
+
         case TokenType.MINUS:
+            checkNumberOperands(expr.operator, left, right);
             return (double)left - (double)right;
         case TokenType.STAR:
+            checkNumberOperands(expr.operator, left, right);
             return (double)left * (double)right;
         case TokenType.SLASH:
+            checkNumberOperands(expr.operator, left, right);
             return (double)left / (double)right;
         case TokenType.EQUAL_EQUAL:
+            checkNumberOperands(expr.operator, left, right);
             return isEqual(left, right);
         case TokenType.BANG_EQUAL:
+            checkNumberOperands(expr.operator, left, right);
             return !isEqual(left, right);
         case TokenType.GREATER:
+            checkNumberOperands(expr.operator, left, right);
             return (double)left > (double)right;
         case TokenType.GREATER_EQUAL:
+            checkNumberOperands(expr.operator, left, right);
             return (double)left >= (double)right;
         case TokenType.LESS:
+            checkNumberOperands(expr.operator, left, right);
             return (double)left < (double)right;
         case TokenType.LESS_EQUAL:
+            checkNumberOperands(expr.operator, left, right);
             return (double)left <= (double)right;
     }
 
-    throw new RuntimeException("Unknown binary operator: " + expr.operator.type);
+    throw new RuntimeError(expr.operator, "Unknown binary operator: " + expr.operator.type);
   }
 
   private boolean isEqual(Object a, Object b) {
@@ -79,13 +93,19 @@ public Object visitLiteralExpr(Expr.Literal expr) {
 
   private void checkNumberOperand(Token operator, Object operand) {
     if (operand instanceof Double) return;
-    throw new RuntimeException("Operand must be a number: " + operator.lexeme);
+    throw new RuntimeError(operator, "Operand must be a number: " + operator.lexeme);
   }
 
   private void checkNumberOperands(Token operator, Object left, Object right) {
     if (left instanceof Double && right instanceof Double) return;
-    throw new RuntimeException("Operands must be numbers: " + operator.lexeme);
+    throw new RuntimeError(operator, "Operands must be numbers: " + operator.lexeme);
   }
 
-  
+
+  void interpret(Expr expression) {
+    try {
+        Object value = evaluate(expression);
+        System.out.println(stringify(value));
+    } catch (RuntimeError error) {
+    lox.error(error.getToken(), error.getMessage());    }
     
