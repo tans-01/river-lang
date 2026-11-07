@@ -1,15 +1,82 @@
-class Interpreter implements Expr.Visitor<Object>{
+import java.util.List;
 
+class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 
+private final Environment environment = new Environment();
 
-void interpret(Expr expression) {
+void interpret(List<Stmt> statements) {
     try {
-        Object value = evaluate(expression);
-        System.out.println(stringify(value));
+        for(Stmt statement : statements)
+            execute(statement);
     } catch (RuntimeError error) {
         lox.runtimeError(error);
     }
   }
+
+@Override
+public Void visitExpressionStmt(Stmt.Expression stmt) {
+ evaluate(stmt.expression);
+ return null;
+}
+
+@Override 
+public Void visitVarStmt(Stmt.Var stmt) {
+    Object value = null;
+    if (stmt.initializer != null) {
+        value = evaluate(stmt.initializer);
+    }
+    environment.define(stmt.name.lexeme, value);
+    return null;
+}
+
+@Override 
+public Void visitBlockStmt(Stmt.Block stmt) {
+    for (Stmt statement : stmt.statements) {
+        execute(statement);
+    }
+    return null;
+}
+
+@Override
+public Void visitRiverStmt(Stmt.River stmt) {
+  environment.define(stmt.name.lexeme, evaluate(stmt.value));
+  return null;
+}
+
+@Override
+public Void visitIfStmt(Stmt.If stmt) { return null; }
+@Override
+public Void visitReleaseStmt(Stmt.Release stmt) { return null; }
+@Override
+public Void visitDamStmt(Stmt.Dam stmt) { return null; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @Override
 public Object visitLiteralExpr(Expr.Literal expr) {
@@ -101,6 +168,10 @@ public Object visitLiteralExpr(Expr.Literal expr) {
 
   private Object evaluate(Expr expr) {
     return expr.accept(this);
+  }
+
+  private void execute(Stmt stmt) {
+    stmt.accept(this);
   }
   
   private boolean isTruthy(Object object) {
