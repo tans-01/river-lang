@@ -37,8 +37,8 @@ public class lox {
     Scanner scanner = new Scanner(source);
     List<Token> tokens = scanner.scanTokens();
     Parser parser = new Parser(tokens);
-    Expr expression = parser.expression();
-new Interpreter().interpret(expression);
+    List<Stmt> statements = parser.parse();
+    new Interpreter().interpret(statements);
     }
 
 

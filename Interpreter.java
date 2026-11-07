@@ -15,7 +15,8 @@ void interpret(List<Stmt> statements) {
 
 @Override
 public Void visitExpressionStmt(Stmt.Expression stmt) {
- evaluate(stmt.expression);
+ Object value = evaluate(stmt.expression);
+ System.out.println(stringify(value));
  return null;
 }
 
@@ -100,8 +101,7 @@ public Object visitLiteralExpr(Expr.Literal expr) {
 
   @Override
   public Object visitVariableExpr(Expr.Variable expr) {
-    // Implement variable lookup here
-    return null;
+    return environment.get(expr.name);
 }   
 
   @Override
