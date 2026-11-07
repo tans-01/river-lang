@@ -50,4 +50,8 @@ public class lox {
         System.err.println("[line " + line + "] Error: " + msg);
     }
 
+    static void runtimeError(RuntimeError error) {
+        System.err.println(error.getMessage() + " [\nline " + error.token().line + "]");
+    }
+
 }

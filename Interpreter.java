@@ -1,5 +1,4 @@
 class Interpreter implements Expr.Visitor<Object>{
-}
 
 
 public Object visitLiteralExpr(Expr.Literal expr) {
@@ -13,6 +12,13 @@ public Object visitLiteralExpr(Expr.Literal expr) {
   public Object visitGroupingExpr(Expr.Grouping expr) {
     return evaluate(expr.expression);
   }
+
+public Object visitVariableExpr(Expr.Variable expr) {
+    // Implement variable lookup here
+    return null;
+}   
+
+public Obje
 
   public Object visitUnaryExpr(Expr.Unary expr) {
     Object right = evaluate(expr.right);
@@ -50,8 +56,6 @@ public Object visitLiteralExpr(Expr.Literal expr) {
                 return (String)left + (String)right;
             }
             throw new RuntimeError(expr.operator, "Operands must be two numbers or two strings.");
-            
-            break;
 
         case TokenType.MINUS:
             checkNumberOperands(expr.operator, left, right);
@@ -107,5 +111,18 @@ public Object visitLiteralExpr(Expr.Literal expr) {
         Object value = evaluate(expression);
         System.out.println(stringify(value));
     } catch (RuntimeError error) {
-    lox.error(error.getToken(), error.getMessage());    }
-    
+        lox.runtimeError(error);
+    }
+  }
+  public String stringify(Object object) {
+    if (object == null) return "nil";
+
+    if (object instanceof Double) {
+        String text = object.toString();
+        if (text.endsWith(".0")) 
+            text = text.substring(0, text.length() - 2);
+        return text;
+    }
+    return object.toString();
+  }
+}

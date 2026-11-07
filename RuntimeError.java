@@ -1,10 +1,12 @@
-public class runtimeError extends RuntimeException {
+public class RuntimeError extends RuntimeException {
     final Token token;
 
-    runtimeError(Token token, String message) {
+    RuntimeError(Token token, String message) {
       super(message);
       this.token = token;
     }
-  } {
-    
+
+    public Token token() {
+        return token;
+    }
 }
