@@ -1,34 +1,51 @@
 class Interpreter implements Expr.Visitor<Object>{
 
 
+
+void interpret(Expr expression) {
+    try {
+        Object value = evaluate(expression);
+        System.out.println(stringify(value));
+    } catch (RuntimeError error) {
+        lox.runtimeError(error);
+    }
+  }
+
+@Override
 public Object visitLiteralExpr(Expr.Literal expr) {
     return expr.value;
 }
 
-  private Object evaluate(Expr expr) {
-    return expr.accept(this);
+@Override
+  public Object visitconnectionExpr(Expr.connection expr) {
+    throw new UnsupportedOperationException("Unimplemented method 'visitconnectionExpr'");
+  }
+
+  @Override
+  public Object visitflowLiteralExpr(Expr.flowLiteral expr) {
+    throw new UnsupportedOperationException("Unimplemented method 'visitflowLiteralExpr'");
   }
  
+  @Override
   public Object visitGroupingExpr(Expr.Grouping expr) {
     return evaluate(expr.expression);
   }
 
-public Object visitVariableExpr(Expr.Variable expr) {
+  @Override
+  public Object visitVariableExpr(Expr.Variable expr) {
     // Implement variable lookup here
     return null;
 }   
 
-public Obje
-
+  @Override
   public Object visitUnaryExpr(Expr.Unary expr) {
     Object right = evaluate(expr.right);
     switch (expr.operator.type) {
-        case TokenType.MINUS:
+        case MINUS:
             checkNumberOperand(expr.operator, right);
             return -(double)right;
 
-        case TokenType.BANG:
-            checkNumberOperand(expr.operator, right);
+        case BANG:
             return !isTruthy(right);
     }
 
@@ -36,19 +53,14 @@ public Obje
         
   }
 
-  private boolean isTruthy(Object object) {
-    if (object == null) return false;
-    if (object instanceof Boolean) return (boolean)object;
-    return true;
-  }
-
+  @Override
   public Object visitBinaryExpr(Expr.Binary expr) {
     Object left = evaluate (expr.left);
     Object right = evaluate(expr.right);
 
     switch (expr.operator.type) {
         
-        case TokenType.PLUS:
+        case PLUS:
             if (left instanceof Double && right instanceof Double) {
                 return (double)left + (double)right;                    // we could add string too now (concatenation)
             }
@@ -57,36 +69,44 @@ public Obje
             }
             throw new RuntimeError(expr.operator, "Operands must be two numbers or two strings.");
 
-        case TokenType.MINUS:
+        case MINUS:
             checkNumberOperands(expr.operator, left, right);
             return (double)left - (double)right;
-        case TokenType.STAR:
+        case STAR:
             checkNumberOperands(expr.operator, left, right);
             return (double)left * (double)right;
-        case TokenType.SLASH:
+        case SLASH:
             checkNumberOperands(expr.operator, left, right);
             return (double)left / (double)right;
-        case TokenType.EQUAL_EQUAL:
-            checkNumberOperands(expr.operator, left, right);
+        case EQUAL_EQUAL: 
             return isEqual(left, right);
-        case TokenType.BANG_EQUAL:
-            checkNumberOperands(expr.operator, left, right);
+        case BANG_EQUAL:
             return !isEqual(left, right);
-        case TokenType.GREATER:
+        case GREATER:
             checkNumberOperands(expr.operator, left, right);
             return (double)left > (double)right;
-        case TokenType.GREATER_EQUAL:
+        case GREATER_EQUAL:
             checkNumberOperands(expr.operator, left, right);
             return (double)left >= (double)right;
-        case TokenType.LESS:
+        case LESS:
             checkNumberOperands(expr.operator, left, right);
             return (double)left < (double)right;
-        case TokenType.LESS_EQUAL:
+        case LESS_EQUAL:
             checkNumberOperands(expr.operator, left, right);
             return (double)left <= (double)right;
     }
 
     throw new RuntimeError(expr.operator, "Unknown binary operator: " + expr.operator.type);
+  }
+
+  private Object evaluate(Expr expr) {
+    return expr.accept(this);
+  }
+  
+  private boolean isTruthy(Object object) {
+    if (object == null) return false;
+    if (object instanceof Boolean) return (boolean)object;
+    return true;
   }
 
   private boolean isEqual(Object a, Object b) {
@@ -106,14 +126,7 @@ public Obje
   }
 
 
-  void interpret(Expr expression) {
-    try {
-        Object value = evaluate(expression);
-        System.out.println(stringify(value));
-    } catch (RuntimeError error) {
-        lox.runtimeError(error);
-    }
-  }
+  
   public String stringify(Object object) {
     if (object == null) return "nil";
 
@@ -125,4 +138,6 @@ public Obje
     }
     return object.toString();
   }
+
+  
 }

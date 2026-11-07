@@ -37,14 +37,10 @@ public class lox {
     Scanner scanner = new Scanner(source);
     List<Token> tokens = scanner.scanTokens();
     Parser parser = new Parser(tokens);
-    List<Stmt> statements = parser.parse();
-
-    AstPrinter printer = new AstPrinter();
-    System.out.println("Parsed " + statements.size() + " statement(s):");
-    for (Stmt stmt : statements) {
-        System.out.println(printer.print(stmt));
+    Expr expression = parser.expression();
+new Interpreter().interpret(expression);
     }
-}
+
 
     static void error(int line, String msg) {
         System.err.println("[line " + line + "] Error: " + msg);
