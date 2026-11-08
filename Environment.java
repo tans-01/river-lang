@@ -14,4 +14,5 @@ class Environment {
     }
     throw new RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");  
    }
+   Object getByName(String name) { return values.get(name); }
 }

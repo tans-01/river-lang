@@ -6,17 +6,17 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 public class lox {
+    
+ public static double rainfall = 1.0;
+
     public static void main(String[] args) throws IOException {
-        if (args.length > 1) {
-            System.out.println("Usage: jlox [script]");
+        if (args.length > 2) {
+            System.out.println("Usage: jlox [script] [rainfall_mm]");
             System.exit(64);
         }
         else {
-            if (args.length == 1) {
-                runFile(args[0]);
-            } else {
-                runPrompt();
-            }
+            if (args.length == 2) rainfall = Double.parseDouble(args[1]);
+            if (args.length >= 1) runFile(args[0]); else runPrompt();
         }
     }
     public static void runFile(String path) throws IOException {
@@ -38,7 +38,7 @@ public class lox {
     List<Token> tokens = scanner.scanTokens();
     Parser parser = new Parser(tokens);
     List<Stmt> statements = parser.parse();
-    new Interpreter().interpret(statements);
+    new Interpreter(rainfall).interpret(statements);
     }
 
 
