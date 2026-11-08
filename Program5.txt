@@ -1,8 +1,11 @@
+// Submission Two: dam output depending on inflow, level, capacity and rainfall
+// Run with: java lox Program5.txt   and   java lox Program5.txt 25
+
 river catchment = rain(1, 1, 50);
 
 dam smart(capacity, startingLevel) {
     if (level + inflow > capacity) {
-        release level + inflow - capacity;
+        release level + inflow - capacity;   // If today’s water would overflow the dam, release only the excess. The dam stays exactly full.
     } else if (rainfall > 20) {
         release inflow;
     } else {

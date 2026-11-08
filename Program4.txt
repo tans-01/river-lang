@@ -1,7 +1,9 @@
+// Submission Two: dam evaluation - no-flow, half-flow, full-flow, release fraction check, release cap
+
 river creek = rain(1, 1, 10);
 
 dam closed() { release 0; }
-dam half() { release inflow / 2; }
+dam half() { release inflow / 0.5; }
 dam open() { release inflow; }
 
 dam gate(percent) {

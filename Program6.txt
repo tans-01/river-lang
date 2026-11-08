@@ -1,0 +1,33 @@
+// Submission Two: the three Googong dam versions from the week 11 exercise
+
+river googong_creek = rain(1, 1, 10);
+
+// Version 1: blocks exactly half the water
+
+dam googong_v1() {
+    release inflow / 2;
+}
+
+// Version 2: blocks half unless today's rain is over 10mm
+
+dam googong_v2() {
+    if (rainfall > 10) {
+        release inflow;
+    } else {
+        release inflow / 2;
+    }
+}
+
+// Version 3: blocks half unless inflow is over 10, then blocks 75%
+
+dam googong_v3() {
+    if (inflow > 10) {
+        release inflow / 4;
+    } else {
+        release inflow / 2;
+    }
+}
+
+river below_v1 = googong_v1() from googong_creek;
+river below_v2 = googong_v2() from googong_creek;
+output river below_v3 = googong_v3() from googong_creek;
