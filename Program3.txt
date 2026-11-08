@@ -12,7 +12,7 @@ dam dam1(capacity, startingLevel) {
     }
 }
 
-river queanbeyan = dam1 from googong;
+river queanbeyan = dam1(100, 50) from googong;
 river central_molongolo = queanbeyan + upper_molongolo + jerrabombarra;
 
 dam dam2(capacity, startingLevel) {
@@ -23,7 +23,7 @@ dam dam2(capacity, startingLevel) {
     }
 }
 
-river lower_molongolo = dam2 from central_molongolo;
+river lower_molongolo = dam2(200, 0) from central_molongolo;
 
 dam dam3(capacity, startingLevel) {
     if (level > capacity) {
@@ -35,4 +35,4 @@ dam dam3(capacity, startingLevel) {
     }
 }
 
-output river final_output = dam3 from lower_molongolo;
+output river final_output = dam3(50, 10) from lower_molongolo;

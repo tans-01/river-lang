@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 
-private final Environment environment = new Environment();
+private Environment environment = new Environment(null);
 
 static final int DAYS = 10;
 private Double rainfall = 1.0;
@@ -57,12 +57,25 @@ public Void visitRiverStmt(Stmt.River stmt) {
 }
 
 @Override
-public Void visitIfStmt(Stmt.If stmt) { return null; }
-@Override
-public Void visitReleaseStmt(Stmt.Release stmt) { return null; }
-@Override
-public Void visitDamStmt(Stmt.Dam stmt) { return null; }
+public Void visitIfStmt(Stmt.If stmt) {
+    if (isTruthy(evaluate(stmt.condition))) {
+        execute(stmt.thenBranch);
+    } else if (stmt.elseBranch != null) {
+        execute(stmt.elseBranch);
+    }
+    return null;
+}
 
+@Override
+public Void visitReleaseStmt(Stmt.Release stmt) {
+     throw new Release(evaluate(stmt.value));
+}
+
+@Override
+public Void visitDamStmt(Stmt.Dam stmt) {
+    environment.define(stmt.name.lexeme, stmt);
+    return null;
+}
 
 @Override
 public Object visitLiteralExpr(Expr.Literal expr) {
@@ -71,8 +84,63 @@ public Object visitLiteralExpr(Expr.Literal expr) {
 
 @Override
   public Object visitconnectionExpr(Expr.connection expr) {
-    throw new UnsupportedOperationException("Unimplemented method 'visitconnectionExpr'");
-  }
+    Object found = environment.get(expr.dam);
+    if (!(found instanceof Stmt.Dam)) {
+        throw new RuntimeError(expr.dam, "'" + expr.dam.lexeme + "' is not a dam.");
+    }
+    Stmt.Dam dam = (Stmt.Dam) found;
+
+    if (expr.args.size() != dam.params.size()) {
+        throw new RuntimeError(expr.dam, "Dam '" + dam.name.lexeme + "' expects "
+            + dam.params.size() + " arguments but got " + expr.args.size() + ".");
+    }
+
+    List<Object> argValues = new ArrayList<>();
+    for (Expr a : expr.args) argValues.add(evaluate(a));
+
+    double[] inflow = toFlow(evaluate(expr.source));
+
+    // the parameter named startingLevel sets the dam's level on day 1
+    double level = 0;
+    for (int i = 0; i < dam.params.size(); i++) {
+        if (dam.params.get(i).lexeme.equals("startingLevel")) level = (Double) argValues.get(i);
+    }
+
+    double[] out = new double[DAYS];
+    Environment previous = environment;
+    try {
+        for (int d = 0; d < DAYS; d++) {
+            Environment today = new Environment(previous);
+            for (int i = 0; i < dam.params.size(); i++) {
+                today.define(dam.params.get(i).lexeme, argValues.get(i));
+            }
+            today.define("inflow", inflow[d]);
+            today.define("level", level);
+            today.define("rainfall", rainfall);
+            today.define("day", (double) (d + 1));
+            environment = today;
+
+            double release = 0;   // no release statement reached = hold everything
+            try {
+                for (Stmt s : dam.body) execute(s);
+            } catch (Release r) {
+                Object v = r.value;
+                if (v instanceof double[]) release = ((double[]) v)[d];   // e.g. release rain(...)
+                else release = (Double) v;
+            }
+
+            double available = level + inflow[d];
+            if (release < 0) release = 0;
+            if (release > available) release = available;   // can't release more than it holds
+
+            out[d] = release;
+            level = available - release;                       // carries over to tomorrow
+        }
+    } finally {
+        environment = previous;
+    }
+    return out;
+}
 
   @Override
   public Object visitflowLiteralExpr(Expr.flowLiteral expr) {
