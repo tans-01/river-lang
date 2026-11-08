@@ -1,0 +1,13 @@
+river catchment = rain(1, 1, 50);
+
+dam smart(capacity, startingLevel) {
+    if (level + inflow > capacity) {
+        release level + inflow - capacity;
+    } else if (rainfall > 20) {
+        release inflow;
+    } else {
+        release inflow /5;
+    }
+}
+
+output river downstream = smart(30, 0) from catchment;

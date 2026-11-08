@@ -1,0 +1,11 @@
+river creek = rain(1, 1, 10);
+
+dam closed() { release 0; }
+dam half() { release inflow /2; }
+dam open() { release inflow; }
+dam greedy(startingLevel) { release inflow * 3; }
+
+river no_flow = closed() from creek;
+river half_flow = half() from creek;
+river full_flow = open() from creek;
+output river capped = greedy(4) from creek;
