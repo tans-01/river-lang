@@ -13,12 +13,12 @@ public class GenerateAst {
       String outputDir = args[0];
       
       defineAst(outputDir, "Expr", Arrays.asList(
-"Binary   : Expr left, Token operator, Expr right",
+        "Binary   : Expr left, Token operator, Expr right",
         "Grouping : Expr expression",
         "Literal  : Object value",
         "Unary    : Token operator, Expr right",
         "Variable : Token name",
-        "connection : Token dam, Expr source",
+        "connection : Token dam, List<Expr> args, Expr source",
         "flowLiteral :  Expr start, Expr spread, Expr magnitude"
       ));
        defineAst(outputDir, "Stmt", Arrays.asList(

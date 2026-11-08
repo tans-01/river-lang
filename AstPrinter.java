@@ -30,9 +30,11 @@ class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
         return expr.name.lexeme;
     }
     public String visitconnectionExpr(Expr.connection expr) {
-        return parenthesize("from " + expr.dam.lexeme, expr.source);
-    }
-    public String visitflowLiteralExpr(Expr.flowLiteral expr) {
+        StringBuilder sb = new StringBuilder("(from " + expr.dam.lexeme);
+        for (Expr a : expr.args) sb.append(" ").append(print(a));
+        sb.append(" ").append(print(expr.source)).append(")");
+        return sb.toString();    }
+        public String visitflowLiteralExpr(Expr.flowLiteral expr) {
         return parenthesize("rain", expr.start, expr.spread, expr.magnitude);
     }
 

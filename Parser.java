@@ -31,11 +31,23 @@ class Parser {
         Token name = consume(TokenType.IDENTIFIER, "Expected river name.");
         consume(TokenType.EQUAL, "Expected '=' after river name.");
         Expr value;
-        if(check(TokenType.IDENTIFIER) && checknext(TokenType.FROM)) {
+        if(check(TokenType.IDENTIFIER) && checknext(TokenType.FROM) || checknext(TokenType.LEFT_PAREN)) {
             Token dam = consume(TokenType.IDENTIFIER, "Expected 'dam name'");
             consume(TokenType.FROM, "Expected 'from' keyword.");
+            List<Expr> args = new ArrayList<>();
+            if (match(TokenType.LEFT_PAREN)) {
+                if(!checknext(TokenType.RIGHT_PAREN)) {
+                    do {
+                        args.add(expression());
+                    }
+                    while (match(TokenType.COMMA));
+                }
+                consume(TokenType.RIGHT_PAREN, "Expect ')' after arguments.");
+            }
+            
+            consume (TokenType.FROM, "Expected 'from' keyword.");
             Expr source = expression();
-            value = new Expr.connection(dam, source);
+            value = new Expr.connection(dam, args, source);
         }
         else {
             value = expression();

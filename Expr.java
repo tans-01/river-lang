@@ -77,8 +77,9 @@ abstract class Expr {
     final Token name;
   }
   static class connection extends Expr {
-    connection(Token dam, Expr source) {
+    connection(Token dam, List<Expr> args, Expr source) {
       this.dam = dam;
+      this.args = args;
       this.source = source;
     }
 
@@ -88,6 +89,7 @@ abstract class Expr {
       return visitor.visitconnectionExpr(this);
     }
     final Token dam;
+    final List<Expr> args;
     final Expr source;
   }
   static class flowLiteral extends Expr {
